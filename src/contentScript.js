@@ -389,6 +389,7 @@
   function showTriggerOnly(ui) {
     isPinnedOpen = false;
     ui.card.classList.remove("visible");
+    ui.trigger.style.display = "flex";
   }
 
   function hideAll(host, ui) {
@@ -396,8 +397,10 @@
     host.style.left = "-99999px";
     host.style.top = "-99999px";
     ui.card.classList.remove("visible");
+    ui.trigger.style.display = "flex";
     cachedSelection = null;
   }
+
 
   function setLoading(ui, isLoading) {
     ui.loader.style.display = isLoading ? "flex" : "none";
@@ -585,8 +588,10 @@
       if (!cachedSelection) return;
 
       isPinnedOpen = true;
+      ui.trigger.style.display = "none";
 
       ui.title.textContent = cachedSelection.text;
+
       ui.card.classList.add("visible");
       setLoading(ui, true);
       ui.content.textContent = "";
@@ -634,7 +639,9 @@
       e.stopPropagation();
       isPinnedOpen = false;
       ui.card.classList.remove("visible");
+      ui.trigger.style.display = "flex";
     });
+
 
     ui.link.addEventListener("click", (e) => {
       e.preventDefault();
@@ -647,11 +654,18 @@
       (e) => {
         const path = e.composedPath ? e.composedPath() : [];
         if (path.includes(host)) return;
-        isPinnedOpen = false;
-        ui.card.classList.remove("visible");
+        if (isPinnedOpen) {
+          isPinnedOpen = false;
+          ui.card.classList.remove("visible");
+          // If we have selection, show trigger; otherwise keep hiding all
+          if (cachedSelection) {
+             ui.trigger.style.display = "flex";
+          }
+        }
       },
       true
     );
+
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
