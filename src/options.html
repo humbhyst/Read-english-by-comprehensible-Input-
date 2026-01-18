@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ULW Settings</title>
+    <style>
+      :root {
+        --primary: #111;
+        --accent: #2563eb;
+        --bg: #f9fafb;
+        --surface: #ffffff;
+        --border: #e5e7eb;
+        --text: #1f2937;
+        --text-muted: #6b7280;
+        --radius: 8px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .settings-card {
+        background: var(--surface);
+        width: 100%;
+        max-width: 440px;
+        padding: 28px;
+        border-radius: 16px;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.06),
+          0 10px 15px -3px rgba(0, 0, 0, 0.06);
+        border: 1px solid var(--border);
+      }
+
+      h1 {
+        font-size: 18px;
+        font-weight: 650;
+        margin: 0 0 8px 0;
+        letter-spacing: -0.01em;
+        color: #111;
+      }
+
+      p.subtitle {
+        margin: 0 0 20px 0;
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.45;
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: var(--primary);
+      }
+
+      input[type="password"],
+      select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        font-size: 14px;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        background: #fff;
+        color: var(--text);
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .row > * {
+        flex: 1;
+      }
+
+      button#save-btn {
+        width: 100%;
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: var(--radius);
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: transform 0.08s ease, background 0.2s ease;
+        margin-top: 6px;
+      }
+
+      button#save-btn:hover {
+        background: #000;
+      }
+
+      button#save-btn:active {
+        transform: scale(0.985);
+      }
+
+      #status-msg {
+        margin-top: 14px;
+        font-size: 13px;
+        text-align: center;
+        min-height: 18px;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+      }
+
+      #status-msg.success {
+        color: #059669;
+        opacity: 1;
+      }
+
+      #status-msg.error {
+        color: #dc2626;
+        opacity: 1;
+      }
+
+      .hint {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 6px;
+        line-height: 1.4;
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        font-size: 11px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="settings-card">
+      <h1>ULW Settings</h1>
+      <p class="subtitle">
+        Provide your Gemini API key and select the English level you can comfortably read. The
+        extension will explain selected words/phrases using English at that level.
+      </p>
+
+      <form id="options-form">
+        <div class="form-group">
+          <label for="apiKey">Gemini API Key</label>
+          <input
+            type="password"
+            id="apiKey"
+            placeholder="AIza..."
+            spellcheck="false"
+            autocomplete="off"
+          />
+          <div class="hint">Stored locally on this device via <code>chrome.storage.local</code>.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="geminiModel">Gemini Model</label>
+          <div class="row">
+            <select id="geminiModel" disabled>
+              <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+            </select>
+            <button
+              type="button"
+              id="refresh-models-btn"
+              style="flex: 0 0 auto; width: auto; margin-top: 0; padding: 10px 12px"
+              disabled
+            >
+              Refresh
+            </button>
+          </div>
+          <div id="model-msg" class="hint" aria-live="polite"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="cefrLevel">Your Reading Level</label>
+          <select id="cefrLevel">
+            <option value="A1">A1 - Beginner</option>
+            <option value="A2">A2 - Elementary</option>
+            <option value="B1">B1 - Intermediate</option>
+            <option value="B2">B2 - Upper Intermediate</option>
+            <option value="C1">C1 - Advanced</option>
+            <option value="C2">C2 - Proficient</option>
+          </select>
+        </div>
+
+        <button type="submit" id="save-btn">Save</button>
+      </form>
+
+      <div id="status-msg"></div>
+    </div>
+
+    <script src="options.js"></script>
+  </body>
+</html>

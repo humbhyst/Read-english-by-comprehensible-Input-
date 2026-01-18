@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "ULW Learn English with English you can understand",
+  "version": "0.1.0",
+  "description": "Explain selected English words/phrases in simple English at your level (A1-C2).",
+  "permissions": ["storage"],
+  "host_permissions": ["https://generativelanguage.googleapis.com/*"],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "options_page": "src/options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+    "js": ["src/contentScript.js"],
+    "run_at": "document_idle",
+    "all_frames": false
+
+    }
+  ],
+  "action": {
+    "default_title": "ULW: Explain selection"
+  }
+}
