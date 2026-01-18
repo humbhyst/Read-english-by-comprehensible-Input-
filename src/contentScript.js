@@ -542,12 +542,10 @@
     });
 
     const header = ui.card.querySelector(".ai-header");
-    let isDragging = false;
-    let startX = 0, startY = 0;
-    let startLeft = 0, startTop = 0;
-
+    
     header.addEventListener("mousedown", (e) => {
       isDragging = true;
+
       isPinnedOpen = true;
       startX = e.clientX;
       startY = e.clientY;
