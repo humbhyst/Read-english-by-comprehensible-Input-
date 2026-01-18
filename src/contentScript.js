@@ -371,7 +371,7 @@
     return Math.max(min, Math.min(max, n));
   }
 
-    function positionHostAtSelection(host, rect) {
+  function positionHostAtSelection(host, rect) {
     const x = rect.right + 8;
     const y = rect.top;
 
