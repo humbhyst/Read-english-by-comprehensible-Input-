@@ -10,7 +10,13 @@
   function createHost() {
     const host = document.createElement("div");
     host.id = HOST_ID;
-    host.style.position = "fixed";
+    // Use absolute positioning instead of fixed. On sites that apply CSS
+    // transforms to ancestor elements (e.g. Twitter/X), a fixed element
+    // becomes relative to the transformed ancestor, which can cause the
+    // overlay to appear far from the selected text. Absolute positioning
+    // combined with scroll offsets ensures the overlay is anchored
+    // correctly relative to the document and independent of transforms.
+    host.style.position = "absolute";
     host.style.left = "0px";
     host.style.top = "0px";
     host.style.zIndex = "2147483647";
@@ -372,14 +378,21 @@
   }
 
   function positionHostAtSelection(host, rect) {
-    const x = rect.right + 8;
-    const y = rect.top;
+    // Calculate the desired position relative to the document. We add scroll
+    // offsets so that the overlay follows the viewport when scrolling and
+    // remains near the selected text even inside transformed containers.
+    const x = rect.right + 8 + window.scrollX;
+    const y = rect.top + window.scrollY;
 
-    const minX = 8;
-    const maxX = window.innerWidth - 360;
+    // Constrain the overlay to the visible viewport area. Because the
+    // element is absolutely positioned relative to the document, include
+    // scroll offsets in the min/max calculations to keep the overlay
+    // within the viewport bounds.
+    const minX = window.scrollX + 8;
+    const maxX = window.scrollX + window.innerWidth - 360;
 
-    const minY = 8;
-    const maxY = window.innerHeight - 320;
+    const minY = window.scrollY + 8;
+    const maxY = window.scrollY + window.innerHeight - 320;
 
     host.style.left = `${clamp(x, minX, maxX)}px`;
     host.style.top = `${clamp(y, minY, maxY)}px`;
